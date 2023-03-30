@@ -127,3 +127,46 @@
   (lambda (n)
     (ccdr ((n !step) ((ccons c0) c1)))))
 
+(define Y
+  (lambda (f)
+    (
+     (lambda (x) (f (x x)))
+     (lambda (x) (f (x x)))
+     )))
+
+(define Z
+  (lambda (f)
+    (
+     (lambda (x) (f (lambda (y) ((x x) y))))
+     (lambda (x) (f (lambda (y) ((x x) y))))
+     )))
+
+
+(define (fact n)
+  (if (= n 0) 1
+      (* n (fact (- n 1)))))
+
+(define fact
+  (lambda (n)
+    (if (= n 0) 1
+        (* n (fact (- n 1))))))
+
+(define fact
+  (fixpoint
+   (lambda (f)
+     (lambda (n)
+       (if (= n 0) 1
+           (* n (f (- n 1))))))))
+
+(define (fixpoint gamma)
+  (lambda (n)
+    ((gamma (fixpoint gamma)) n)))
+
+(define gammafact
+  (lambda (f)
+    (lambda (n)
+      (((c=0 n)
+        (lambda (y) (c1 y)))
+       (lambda (y) (((c* n) (f (cp n))) y))))))
+
+(define cfact (Z gammafact))
