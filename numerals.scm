@@ -85,3 +85,45 @@
   (lambda (p)
     (lambda (q)
       ((p c#t) q))))
+
+(define c=0
+  (lambda (n)
+    ((n (lambda (p) c#f)) c#t)))
+
+(define c/2
+  (lambda (n)
+    ((n c¬) c#t)))
+
+(define ccons
+  (lambda (x)
+    (lambda (y)
+      (lambda (b)
+        ((b x) y)))))
+
+(define ccar
+  (lambda (z)
+    (z c#t)))
+
+(define ccdr
+  (lambda (z)
+    (z c#f)))
+
+(define (printpn z)
+  (cons (printn (ccar z)) (printn (ccdr z))))
+
+(define pstep
+  (lambda (z)
+    ((ccons (cs (ccar z))) (ccar z))))
+
+(define cp
+  (lambda (n)
+    (ccdr ((n pstep) ((ccons c0) c0)))))
+
+(define !step
+  (lambda (z)
+    ((ccons (cs (ccar z))) ((c* (cs (ccar z))) (ccdr z)))))
+
+(define c!
+  (lambda (n)
+    (ccdr ((n !step) ((ccons c0) c1)))))
+
