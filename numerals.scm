@@ -151,16 +151,16 @@
     (if (= n 0) 1
         (* n (fact (- n 1))))))
 
+(define (fixpoint gamma)
+  (lambda (n)
+    ((gamma (fixpoint gamma)) n)))
+
 (define fact
   (fixpoint
    (lambda (f)
      (lambda (n)
        (if (= n 0) 1
            (* n (f (- n 1))))))))
-
-(define (fixpoint gamma)
-  (lambda (n)
-    ((gamma (fixpoint gamma)) n)))
 
 (define gammafact
   (lambda (f)
