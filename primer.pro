@@ -20,3 +20,8 @@ add(s(X), Y, s(Z)) :- add(X, Y, Z).
 
 member(X, [X|_]).
 member(X, [_|T]) :- member(X, T).
+
+:- op(130, xfx, ∈).
+
+X ∈ [X|_].
+X ∈ [_|T] :- X ∈ T.
