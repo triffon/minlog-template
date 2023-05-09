@@ -3,6 +3,7 @@ split (s,t) f = f s t
 
 data N = O | S N
 data B = Tt | Ff
+  deriving (Show, Read, Eq, Ord, Enum)
 
 p :: N -> N
 p O     = O
@@ -54,3 +55,9 @@ gfact = \f n -> cases (z n) (S O) (mult n (f (p n)))
 
 fact :: N -> N
 fact = y gfact
+
+gammaeq :: (N -> N -> B) -> N -> N -> B
+gammaeq = \f m n -> cases (z m) (z n) (f (p m) (p n))
+
+eq :: N -> N -> B
+eq = y gammaeq
