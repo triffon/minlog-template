@@ -25,6 +25,45 @@
 (define base? var?)
 (define arrow? pair?)
 
+(define (unionv l1 l2)
+  (cond ((null? l1) l2)
+        ((memv (car l1) l2) (unionv (cdr l1) l2))
+        (else (cons (car l1) (unionv (cdr l1) l2)))))
+
+(define (fv M)
+  (cond ((var? M) (list M))
+        ((app? M) (unionv (fv (get-fun M))
+                          (fv (get-arg M))))
+        ((abs? M) (filter
+                   (lambda (x)
+                     (not (eqv? x (get-var M))))
+                   (fv (get-body M))))))
+
+(define (make-λs M vars)
+  (foldr make-λ M vars))
+
+(define (make-arrows ρs σ)
+  (foldr make-arrow σ ρs)) 
+
+(define (close M)
+  (make-λs M (fv M)))
+
+(define (rename-var M x y)
+  (cond ((and (var? M) (eqv? M x) y))
+        ((var? M) M)
+        ((app? M) (make-app
+                   (rename-var (get-fun M) x y)
+                   (rename-var (get-arg M) x y)))
+        ((abs? M) (make-λ
+                   (get-var M)
+                   (rename-var (get-body M) x y)))))
+
+(define (reduce-vars xs M)
+  (if (null? xs) M
+      (rename-var
+       (reduce-vars (cdr xs) (get-body M))
+       (get-var M) (car xs))))
+  
 ;; оценките ще са функции от променливи в стойности
 
 (define (modify ξ x a)
@@ -57,12 +96,18 @@
         (make-λ x
                   (⇓ σ (a (⇑ ρ x)))))))
 
-(define (nbe τ M)
-  (⇓ τ (evaluate M 'nothing))))
+;; ((x₁ τ₁) (x₂ τ₂) ... (xₙ τₙ)) - контекст 
+
+(define (nbe Γ τ M)
+  (let ((xs (map car Γ))
+        (ρs (map cadr Γ)))
+    (reduce-vars xs
+                 (⇓ (make-arrows ρs τ)
+                    (evaluate (make-λs M xs) 'empty)))))
 
 (define S '(λ (x) (λ (y) (λ (z) ((x z) (y z))))))
 (define K '(λ (x) (λ (y) x)))
 (define ti '(⇒ α α))
 
-(define I (nbe ti `((,S ,K) ,K)))
-;; !!! (define x (nbe 'α `(,I x)))
+(define I (nbe '() ti `((,S ,K) ,K)))
+(define x (nbe '((x α)) 'α `(,I x)))
