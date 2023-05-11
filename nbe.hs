@@ -7,7 +7,7 @@ data T = TVar String | T :⇒ T
 data Λ = Var String | Λ :@ Λ | Abs String Λ
   deriving (Eq, Show, Read, Ord)
 -- S = [[Λ]]
-data S = Atom Λ | Fun { getFun :: S -> S }
+data S = Atom Λ | Fun { getFun :: S -> IO S }
 
 type Valuation = String -> S
 
@@ -16,21 +16,35 @@ modify ξ (x,a) y
   | y == x    = a
   | otherwise = ξ y
 
-evaluate :: Λ -> Valuation -> S
-evaluate (Var x)    ξ = ξ x
-evaluate (m₁ :@ m₂) ξ = getFun (evaluate m₁ ξ) $ evaluate m₂ ξ
-evaluate (Abs x n)  ξ = Fun $ \a -> evaluate n $ modify ξ (x,a)
+evaluate :: Λ -> Valuation -> IO S
+evaluate (Var x)    ξ = return $ ξ x
+evaluate (m₁ :@ m₂) ξ = do
+  a <- evaluate m₁ ξ
+  b <- evaluate m₂ ξ
+  getFun a b
+evaluate (Abs x n)  ξ = return $ Fun $ \a -> evaluate n $ modify ξ (x,a)
 
-(⇑) :: Λ -> T -> S
-m ⇑ (TVar μ) = Atom m
-m ⇑ (ρ :⇒ σ) = Fun $ \a -> (m :@ (a ⇓ ρ)) ⇑ σ
+(⇑) :: Λ -> T -> IO S
+m ⇑ (TVar μ) = return $ Atom m
+m ⇑ (ρ :⇒ σ) = do
+  let f a = do
+        n <- a ⇓ ρ
+        (m :@ n) ⇑ σ
+  return $ Fun f
 
-(⇓) :: S -> T -> Λ
-(Atom m) ⇓ (TVar μ) = m
-(Fun a)  ⇓ (ρ :⇒ σ) = Abs "x" ((a ((Var "x") ⇑ ρ)) ⇓ σ)
+(⇓) :: S -> T -> IO Λ
+(Atom m) ⇓ (TVar μ) = return m
+(Fun a)  ⇓ (ρ :⇒ σ) = do
+  x <- genSym "x"
+  xx <- (Var x) ⇑ ρ
+  y <- a xx
+  n <- (y ⇓ σ)
+  return $ Abs x n
 
-nbe :: Λ -> T -> Λ
-nbe m τ = (evaluate m undefined) ⇓ τ
+nbe :: Λ -> T -> IO Λ
+nbe m τ = do
+  val <- evaluate m undefined
+  val ⇓ τ
 
 k = Abs "x" $ Abs "y" $ Var "x"
 s = Abs "x" $ Abs "y" $ Abs "z" (((Var "x") :@ (Var "z")) :@ ((Var "y") :@ (Var "z")))
