@@ -43,3 +43,8 @@ s = Abs "x" $ Abs "y" $ Abs "z" (((Var "x") :@ (Var "z")) :@ ((Var "y") :@ (Var 
 
 i = nbe [] ((s :@ k) :@ k) (TVar "α" :⇒ TVar "α")
 x = nbe [("x", TVar "α")] (((s :@ k) :@ k) :@ Var "x") (TVar "α")
+
+c n = Abs "f" $ Abs "x" $ iterate (Var "f":@) (Var "x") !! n
+plus = Abs "m" $ Abs "n" $ Abs "f" $ Abs "x" $ Var "m" :@ Var "f" :@ (Var "n" :@ Var "f" :@ Var "x")
+
+c13 = nbe [] (plus :@ c 5 :@ c 8) ((TVar "α" :⇒ TVar "α") :⇒ (TVar "α" :⇒ TVar "α"))
