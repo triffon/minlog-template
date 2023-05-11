@@ -3,7 +3,9 @@ genSym :: String -> IO String
 genSym name = ((name ++) . show . hashUnique) <$> newUnique
 
 data T = TVar String | T :⇒ T
+  deriving (Eq, Show, Read, Ord)
 data Λ = Var String | Λ :@ Λ | Abs String Λ
+  deriving (Eq, Show, Read, Ord)
 -- S = [[Λ]]
 data S = Atom Λ | Fun { getFun :: S -> S }
 
@@ -29,3 +31,9 @@ m ⇑ (ρ :⇒ σ) = Fun $ \a -> (m :@ (a ⇓ ρ)) ⇑ σ
 
 nbe :: Λ -> T -> Λ
 nbe m τ = (evaluate m undefined) ⇓ τ
+
+k = Abs "x" $ Abs "y" $ Var "x"
+s = Abs "x" $ Abs "y" $ Abs "z" (((Var "x") :@ (Var "z")) :@ ((Var "y") :@ (Var "z")))
+
+i = nbe ((s :@ k) :@ k) (TVar "α" :⇒ TVar "α")
+
