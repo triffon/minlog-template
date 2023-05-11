@@ -1,6 +1,8 @@
 import Data.Unique
 import Control.Arrow
 import Control.Monad
+import Data.Maybe
+
 genSym :: String -> IO String
 genSym name = ((name ++) . show . hashUnique) <$> newUnique
 
@@ -11,15 +13,17 @@ data Λ = Var String | Λ :@ Λ | Abs String Λ
 -- S = [[Λ]]
 data S = Atom Λ | Fun { getFun :: S -> IO S }
 
-type Valuation = String -> S
+type Context = [(String,T)]
+
+type Valuation = String -> IO S
 
 modify :: Valuation -> (String, S) -> Valuation
 modify ξ (x,a) y
-  | y == x    = a
+  | y == x    = return a
   | otherwise = ξ y
 
 evaluate :: Λ -> Valuation -> IO S
-evaluate (Var x)    ξ = return $ ξ x
+evaluate (Var x)    ξ = ξ x
 evaluate (m₁ :@ m₂) ξ = join $ getFun <$> evaluate m₁ ξ <*> evaluate m₂ ξ
 evaluate (Abs x n)  ξ = return $ Fun $ \a -> evaluate n $ modify ξ (x,a)
 
@@ -31,11 +35,11 @@ m ⇑ (ρ :⇒ σ) = return $ Fun $ (⇑σ) . (m:@) <=< (⇓ρ)
 (Atom m) ⇓ (TVar μ) = return m
 (Fun a)  ⇓ (ρ :⇒ σ) = genSym "x" >>= \x -> (return . Abs x <=< (⇓σ) <=< a) =<< Var x ⇑ ρ
 
-nbe :: Λ -> T -> IO Λ
-nbe m τ = (⇓ τ) =<< evaluate m undefined
+nbe :: Context -> Λ -> T -> IO Λ
+nbe γ m τ = (⇓ τ) =<< evaluate m (\x -> Var x ⇑ fromJust (lookup x γ))
 
 k = Abs "x" $ Abs "y" $ Var "x"
 s = Abs "x" $ Abs "y" $ Abs "z" (((Var "x") :@ (Var "z")) :@ ((Var "y") :@ (Var "z")))
 
-i = nbe ((s :@ k) :@ k) (TVar "α" :⇒ TVar "α")
-
+i = nbe [] ((s :@ k) :@ k) (TVar "α" :⇒ TVar "α")
+x = nbe [("x", TVar "α")] (((s :@ k) :@ k) :@ Var "x") (TVar "α")
