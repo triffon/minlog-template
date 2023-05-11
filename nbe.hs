@@ -1,4 +1,6 @@
 import Data.Unique
+import Control.Arrow
+import Control.Monad
 genSym :: String -> IO String
 genSym name = ((name ++) . show . hashUnique) <$> newUnique
 
@@ -18,33 +20,19 @@ modify ξ (x,a) y
 
 evaluate :: Λ -> Valuation -> IO S
 evaluate (Var x)    ξ = return $ ξ x
-evaluate (m₁ :@ m₂) ξ = do
-  a <- evaluate m₁ ξ
-  b <- evaluate m₂ ξ
-  getFun a b
+evaluate (m₁ :@ m₂) ξ = join $ getFun <$> evaluate m₁ ξ <*> evaluate m₂ ξ
 evaluate (Abs x n)  ξ = return $ Fun $ \a -> evaluate n $ modify ξ (x,a)
 
 (⇑) :: Λ -> T -> IO S
 m ⇑ (TVar μ) = return $ Atom m
-m ⇑ (ρ :⇒ σ) = do
-  let f a = do
-        n <- a ⇓ ρ
-        (m :@ n) ⇑ σ
-  return $ Fun f
+m ⇑ (ρ :⇒ σ) = return $ Fun $ (⇑σ) . (m:@) <=< (⇓ρ)
 
 (⇓) :: S -> T -> IO Λ
 (Atom m) ⇓ (TVar μ) = return m
-(Fun a)  ⇓ (ρ :⇒ σ) = do
-  x <- genSym "x"
-  xx <- (Var x) ⇑ ρ
-  y <- a xx
-  n <- (y ⇓ σ)
-  return $ Abs x n
+(Fun a)  ⇓ (ρ :⇒ σ) = genSym "x" >>= \x -> (return . Abs x <=< (⇓σ) <=< a) =<< Var x ⇑ ρ
 
 nbe :: Λ -> T -> IO Λ
-nbe m τ = do
-  val <- evaluate m undefined
-  val ⇓ τ
+nbe m τ = (⇓ τ) =<< evaluate m undefined
 
 k = Abs "x" $ Abs "y" $ Var "x"
 s = Abs "x" $ Abs "y" $ Abs "z" (((Var "x") :@ (Var "z")) :@ ((Var "y") :@ (Var "z")))
