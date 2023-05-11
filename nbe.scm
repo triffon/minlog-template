@@ -111,3 +111,20 @@
 
 (define I (nbe '() ti `((,S ,K) ,K)))
 (define x (nbe '((x α)) 'α `(,I x)))
+
+(define (repeated-app f x n)
+  (if (= n 0) x
+      (make-app f (repeated-app f x (- n 1)))))
+
+(define (c n)
+  (make-λ 'f (make-λ 'x (repeated-app 'f 'x n))))
+
+(define c+
+  (make-λ 'm
+          (make-λ 'n
+                  (make-λ 'f
+                          (make-λ 'x
+                                  (make-app (make-app 'm 'f) (make-app (make-app 'n 'f) 'x)))))))
+
+(define tn `(⇒ ,ti ,ti))
+(define c13 (make-app (make-app c+ (c 5)) (c 8)))
