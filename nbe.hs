@@ -1,6 +1,6 @@
 import Data.Unique
 genSym :: String -> IO String
-genSym name = ((name ++) . show . hashUnique) <$> newUnique 
+genSym name = ((name ++) . show . hashUnique) <$> newUnique
 
 data T = TVar String | T :⇒ T
 data Λ = Var String | Λ :@ Λ | Abs String Λ
