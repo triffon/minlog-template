@@ -1,5 +1,4 @@
 import Data.Unique
-import Control.Arrow
 import Control.Monad
 import Data.Maybe
 
