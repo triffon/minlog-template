@@ -23,7 +23,7 @@ modify ξ (x,a) y
 
 evaluate :: Λ -> Valuation -> IO S
 evaluate (Var x)    ξ = ξ x
-evaluate (m₁ :@ m₂) ξ = join $ getFun <$> evaluate m₁ ξ <*> evaluate m₂ ξ
+evaluate (m₁ :@ m₂) ξ = join $ liftM2 getFun (evaluate m₁ ξ) $ evaluate m₂ ξ
 evaluate (Abs x n)  ξ = return $ Fun $ \a -> evaluate n $ modify ξ (x,a)
 
 (⇑) :: Λ -> T -> IO S
