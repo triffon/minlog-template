@@ -4,15 +4,15 @@
 	"dockerfile": "Dockerfile"
     },
 
-    "customizations": {
-        // Configure default extensions
-        "vscode": {
-            "extensions": [
-                // Racket support
-                "evzen-wybitul.magic-racket",
-                // Bulgarian support
-                "ms-ceintl.vscode-language-pack-bg"
-            ]
-        }
-    }
+    "settings": {
+	"magic-racket.lsp.enabled": true,
+	"magic-racket.general.racketPath": "xvfb-run racket",
+    },
+
+    "extensions": [
+        // Racket support
+        "evzen-wybitul.magic-racket",
+        // Bulgarian support
+        "ms-ceintl.vscode-language-pack-bg"
+    ],
 }
