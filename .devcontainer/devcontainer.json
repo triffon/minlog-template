@@ -9,6 +9,8 @@
         "magicRacket.REPL.arguments": [
             "--lib",
             "r5rs",
+            "--load",
+            "/usr/src/minlog/init.scm",
             "--repl"
         ],
     },
