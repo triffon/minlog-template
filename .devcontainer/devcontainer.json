@@ -5,8 +5,18 @@
     },
 
     "settings": {
-	"magic-racket.lsp.enabled": true,
-	"magic-racket.general.racketPath": "xvfb-run racket",
+        "magicRacket.languageServer.command": "xvfb-racket",
+        "magicRacket.REPL.arguments": [
+            "--lib",
+            "r5rs",
+            "--repl"
+        ],
+        "magicRacket.languageServer.arguments": [
+            "--lib",
+            "racket-langserver",
+            "--lib",
+            "r5rs"
+        ]
     },
 
     "extensions": [

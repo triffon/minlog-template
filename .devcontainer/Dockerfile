@@ -23,4 +23,4 @@ COPY xvfb-racket /usr/local/bin
 RUN chmod +x /usr/local/bin/xvfb-racket
 
 # install Racket language server
-RUN raco pkg install --auto racket-langserver
+RUN raco pkg install --scope installation --auto racket-langserver
