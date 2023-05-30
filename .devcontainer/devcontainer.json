@@ -11,12 +11,6 @@
             "r5rs",
             "--repl"
         ],
-        "magicRacket.languageServer.arguments": [
-            "--lib",
-            "racket-langserver",
-            "--lib",
-            "r5rs"
-        ]
     },
 
     "extensions": [
