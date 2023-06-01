@@ -33,7 +33,6 @@
 ;; (split) = ∧⁺
 ;; (intro <n>) = ∨⁺ₙ
 ;; (elim) = ∨⁻
-;; (ord-intro [01])
 ;; (ex-intro <term>) = ∃⁺ <term>
 ;; (ex-elim <avar>) = ∃⁻ <avar>
 
