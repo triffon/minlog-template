@@ -31,8 +31,8 @@
 ;; →⁻  with assumption <avar> and ∀⁻ with <term>s, autoapplying ∧⁻ as needed
 
 ;; (split) = ∧⁺
-;; (intro <n>) = ∨⁺ₙ
-;; (elim) = ∨⁻
+;; (intro <n>) = ∨⁺ ₙ
+;; (elim <avar>) = ∨⁻ <avar>
 ;; (ex-intro <term>) = ∃⁺ <term>
 ;; (ex-elim <avar>) = ∃⁻ <avar>
 
