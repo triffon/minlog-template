@@ -5,6 +5,8 @@
 ;; pf = parse formula
 ;; pp = pretty print
 
+(pp (py "alpha"))
+
 ;; (add-pvar-name <name> <arity>)
 ;; create a new predicate variable (symbol) with <name> and <arity>
 
@@ -36,6 +38,14 @@
 ;; (ord-intro [01])
 ;; (ex-intro <term>) = ∃⁺ <term>
 ;; (ex-elim <avar>) = ∃⁻ <avar>
+
+;; (current-proof) = current proof object
+
+;; (cdp [<proof>])
+;; check and display (current) <proof> as a tree
+
+;; (proof-to-expr <proof>)
+;; display proof as a lambda term
 
 ;; (add-var-name <name> <type>)
 ;; create a new variable with <name> of <type>
