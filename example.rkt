@@ -24,8 +24,11 @@
 ;; (assume {<avar> | <var>}⁺)
 ;; →⁺ and ∀⁺ with <avar>s or <var>s
 
-;; (use {<avar> | <term>}⁺)
-;; →⁻ and ∀⁻ with assumption(s) <avar> and term(s) <term>
+;; (use <avar>)
+;; →⁻, autoapplying ∀⁻ and ∧⁻ as needed
+
+;; (use-with <avar> {<term>}⁺)
+;; →⁻  with assumption <avar> and ∀⁻ with <term>s, autoapplying ∧⁻ as needed
 
 ;; (split) = ∧⁺
 ;; (intro <n>) = ∨⁺ₙ
