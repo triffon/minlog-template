@@ -1,2 +1,4 @@
 # игнориране на log файлове
 *.log
+# ignore backup files
+*~

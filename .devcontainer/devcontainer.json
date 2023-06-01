@@ -1,0 +1,24 @@
+{
+    "name": "Minlog",
+    "build": {
+	"dockerfile": "Dockerfile"
+    },
+
+    "settings": {
+        "magicRacket.languageServer.command": "xvfb-racket",
+        "magicRacket.REPL.arguments": [
+            "--lib",
+            "r5rs",
+            "--load",
+            "/usr/src/minlog/init.scm",
+            "--repl"
+        ],
+    },
+
+    "extensions": [
+        // Racket support
+        "evzen-wybitul.magic-racket",
+        // Bulgarian support
+        "ms-ceintl.vscode-language-pack-bg"
+    ],
+}
