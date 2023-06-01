@@ -5,8 +5,6 @@
 ;; pf = parse formula
 ;; pp = pretty print
 
-(pp (py "alpha"))
-
 ;; (add-pvar-name <name> <arity>)
 ;; create a new predicate variable (symbol) with <name> and <arity>
 
