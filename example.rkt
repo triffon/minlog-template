@@ -22,7 +22,7 @@
 ;; start a new proof with <formula> as a goal
 
 ;; (assume {<avar> | <var>}⁺)
-;; →⁺ and ∀⁺ with <avar>s or <var>s
+;; →⁺ with <avar>s or and ∀⁺ with <var>s
 
 ;; (use <avar>)
 ;; →⁻, autoapplying ∀⁻ and ∧⁻ as needed
